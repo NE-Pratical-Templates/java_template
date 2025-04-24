@@ -7,6 +7,10 @@ import rw.bnr.banking.v1.models.Customer;
 import java.util.Optional;
 import java.util.UUID;
 @Repository
-public interface ICustomerRepository extends JpaRepository<Customer, UUID> {
+public interface CustomerRepository extends JpaRepository<Customer, UUID> {
     Optional<Customer> findByEmail(String email);
+
+    Optional<Customer> findByAccount(String accountCode);
+
+    Optional<Customer> findByActivationCode(String verificationCode);
 }

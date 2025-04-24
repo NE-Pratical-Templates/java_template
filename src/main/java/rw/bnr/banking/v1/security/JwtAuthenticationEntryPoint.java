@@ -2,7 +2,7 @@ package rw.bnr.banking.v1.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
-import rw.bnr.banking.v1.dtos.response.ApiResponse;
+import rw.bnr.banking.v1.dtos.response.ApiResponseDTO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +23,6 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         response.setContentType("application/json");
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         ObjectMapper objectMapper = new ObjectMapper();
-        response.getOutputStream().println(objectMapper.writeValueAsString(ApiResponse.error("You are not authorized", authException)));
+        response.getOutputStream().println(objectMapper.writeValueAsString(ApiResponseDTO.error("You are not authorized", authException)));
     }
 }

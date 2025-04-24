@@ -43,7 +43,7 @@ public class Customer extends InitiatorAudit {
     @Column(name = "password")
     private String password;
 
-    @Column(name = "mobile")
+    @Column(name = "mobile",unique = true,nullable = false)
     private String mobile;
 
     @Column(name = "dob")
@@ -52,7 +52,7 @@ public class Customer extends InitiatorAudit {
     @Column(name = "account")
     private String account;
 
-    @Column(name = "balance")
+    @Column(name = "balance", columnDefinition = "DOUBLE DEFAULT 0")
     private double balance;
 
     @Enumerated(EnumType.STRING)
@@ -63,6 +63,9 @@ public class Customer extends InitiatorAudit {
     @OneToOne(cascade = CascadeType.ALL)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private File profileImage;
+
+    @Column(name = "activation_code")
+    private String activationCode;
 
     @JsonIgnore
     @Column(name = "activation_code_expires_at")

@@ -7,7 +7,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import rw.bnr.banking.v1.dtos.response.ApiResponse;
+import rw.bnr.banking.v1.dtos.response.ApiResponseDTO;
 
 import java.util.Objects;
 
@@ -15,20 +15,20 @@ import java.util.Objects;
 public class AppFailureException {
 
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<ApiResponse> handleAnyError(RuntimeException exception) {
-        return ResponseEntity.badRequest().body(ApiResponse.error(exception.getMessage(), exception));
+    public ResponseEntity<ApiResponseDTO> handleAnyError(RuntimeException exception) {
+        return ResponseEntity.badRequest().body(ApiResponseDTO.error(exception.getMessage(), exception));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiResponse> handleValidations(MethodArgumentNotValidException exception) {
+    public ResponseEntity<ApiResponseDTO> handleValidations(MethodArgumentNotValidException exception) {
         FieldError error = Objects.requireNonNull(exception.getFieldError());
         String message = error.getField() + ": " + error.getDefaultMessage();
-        return ResponseEntity.badRequest().body(ApiResponse.error(message, error));
+        return ResponseEntity.badRequest().body(ApiResponseDTO.error(message, error));
     }
 
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<ApiResponse> handleSqlExceptions(ConstraintViolationException exception) {
-        return ResponseEntity.badRequest().body(ApiResponse.error(exception.getMessage() + " - " + exception.getSQL() + " - " + exception.getSQLState(), exception.getSQLException()));
+    public ResponseEntity<ApiResponseDTO> handleSqlExceptions(ConstraintViolationException exception) {
+        return ResponseEntity.badRequest().body(ApiResponseDTO.error(exception.getMessage() + " - " + exception.getSQL() + " - " + exception.getSQLState(), exception.getSQLException()));
     }
 }

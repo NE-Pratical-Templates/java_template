@@ -5,7 +5,7 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 import rw.bnr.banking.v1.enums.ERole;
 import rw.bnr.banking.v1.models.Role;
-import rw.bnr.banking.v1.repositories.IRoleRepository;
+import rw.bnr.banking.v1.repositories.RoleRepository;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -13,9 +13,9 @@ import java.util.Set;
 @Component
 public class DataInitializer implements ApplicationRunner {
 
-    private final IRoleRepository roleRepo;
+    private final RoleRepository roleRepo;
 
-    public DataInitializer(IRoleRepository roleRepo) {
+    public DataInitializer(RoleRepository roleRepo) {
         this.roleRepo = roleRepo;
     }
 
