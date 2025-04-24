@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import rw.bnr.banking.v1.enums.ECustomerStatus;
 import rw.bnr.banking.v1.models.Customer;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -37,9 +38,11 @@ public class UserPrincipal implements UserDetails {
     private Collection<? extends GrantedAuthority> authorities;
 
     public static UserPrincipal create(Customer customer) {
-        List<GrantedAuthority> authorities = customer.getRoles().stream()
-                .map(role -> new SimpleGrantedAuthority(role.getName().toString())).collect(Collectors.toList());
+        List<GrantedAuthority> authorities = new ArrayList<>();
 
+        authorities = customer.getRoles().stream()
+                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getName().name()))
+                .collect(Collectors.toList());
         return new UserPrincipal(
                 customer.getId(),
                 customer.getEmail(),

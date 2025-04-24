@@ -1,17 +1,17 @@
 package rw.bnr.banking.v1.startup;
 
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import rw.bnr.banking.v1.enums.ECustomerStatus;
 import rw.bnr.banking.v1.enums.ERole;
 import rw.bnr.banking.v1.exceptions.BadRequestException;
-import rw.bnr.banking.v1.models.Admin;
+import rw.bnr.banking.v1.models.Customer;
 import rw.bnr.banking.v1.models.Role;
-import rw.bnr.banking.v1.repositories.AdminRepository;
+import rw.bnr.banking.v1.repositories.CustomerRepository;
 import rw.bnr.banking.v1.repositories.RoleRepository;
 
 import java.util.Collections;
@@ -24,12 +24,12 @@ import java.util.Set;
 public class DataInitializer implements ApplicationRunner {
 
     private final RoleRepository roleRepo;
-    private final AdminRepository adminRepo;
+    private final CustomerRepository customerRepo;
     private final PasswordEncoder encoder;
 
-    public DataInitializer(RoleRepository roleRepo, AdminRepository adminRepo, PasswordEncoder encoder) {
+    public DataInitializer(RoleRepository roleRepo, CustomerRepository customerRepo, PasswordEncoder encoder) {
         this.roleRepo = roleRepo;
-        this.adminRepo = adminRepo;
+        this.customerRepo = customerRepo;
         this.encoder = encoder;
     }
 
@@ -52,19 +52,20 @@ public class DataInitializer implements ApplicationRunner {
                 log.info("{} already exists.", role);
             }
         }
-        Optional<Admin> admin = adminRepo.findByEmail("admin@gmail.com");
+        Optional<Customer> admin = customerRepo.findByEmail("admin@gmail.com");
         if (admin.isEmpty()) {
-            Admin newAdmin = new Admin();
+            Customer newAdmin = new Customer();
             newAdmin.setFirstName("admin");
             newAdmin.setLastName("admin");
             newAdmin.setEmail("admin@gmail.com");
             newAdmin.setPassword(encoder.encode("admin"));
             newAdmin.setMobile("0799999999");
+            newAdmin.setStatus(ECustomerStatus.ACTIVE);
             Role role = roleRepo.findByName(ERole.ADMIN).orElseThrow(
                     () -> new BadRequestException("ADMIN Role not set"));
             newAdmin.setRoles(Collections.singleton(role));
 
-            adminRepo.save(newAdmin);
+            customerRepo.save(newAdmin);
         } else {
             log.info("{} already exists.", admin.get().getEmail());
 
