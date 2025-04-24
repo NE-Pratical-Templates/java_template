@@ -74,6 +74,6 @@ public class WebSecurityConfig {
             "/swagger-ui/index.html",
             "/configuration/**",
             "/actuator/**",
-            "/api/v1/auth/**"
+            "/api/v1/auth/**",
     };
 }

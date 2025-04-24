@@ -37,7 +37,7 @@ public class AuthController {
     })
     @PostMapping("/login")
     ResponseEntity<ApiResponseDTO> login(@Valid @RequestBody LoginDTO dto) {
-        return ResponseEntity.ok(ApiResponseDTO.success("customer created successfully", authService.login(dto)));
+        return ResponseEntity.ok(ApiResponseDTO.success("customer logged in  successfully", authService.login(dto)));
     }
 
     //    initiate account verification
@@ -46,7 +46,7 @@ public class AuthController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Verification code sent"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Invalid email format or email not found")
     })
-    @PutMapping("/initiate-account-verification")
+    @PatchMapping("/initiate-account-verification")
     private ResponseEntity<ApiResponseDTO> initiateAccountVerification(@RequestBody @Valid InitiateAccountVerificationDTO dto) {
         this.authService.initiateAccountVerification(dto.getEmail());
         return ResponseEntity.ok(ApiResponseDTO.success("Verification code sent to email, expiring in 6 hours"));
@@ -74,7 +74,7 @@ public class AuthController {
             @ApiResponse(responseCode = "200", description = "Password reset code sent"),
             @ApiResponse(responseCode = "404", description = "Email not found")
     })
-    @PostMapping(path = "/initiate-reset-password")
+    @PatchMapping(path = "/initiate-reset-password")
     public ResponseEntity<ApiResponseDTO> initiateResetPassword(@RequestBody @Valid InitiatePasswordResetDTO dto) {
         this.authService.initiateResetPassword(dto.getEmail());
         return ResponseEntity.ok(ApiResponseDTO.success("Please check your mail and activate account"));
@@ -86,7 +86,7 @@ public class AuthController {
             @ApiResponse(responseCode = "200", description = "Password successfully reset"),
             @ApiResponse(responseCode = "400", description = "Invalid or expired reset code")
     })
-    @PostMapping(path = "/reset-password")
+    @PatchMapping(path = "/reset-password")
     public ResponseEntity<ApiResponseDTO> resetPassword(@RequestBody @Valid ResetPasswordDTO dto) {
         this.authService.resetPassword(dto.getEmail(), dto.getPasswordResetCode(), dto.getNewPassword());
         return ResponseEntity.ok(ApiResponseDTO.success("Password successfully reset"));

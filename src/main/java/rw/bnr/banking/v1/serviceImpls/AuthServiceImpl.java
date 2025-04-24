@@ -22,6 +22,7 @@ import rw.bnr.banking.v1.models.Role;
 import rw.bnr.banking.v1.repositories.CustomerRepository;
 import rw.bnr.banking.v1.repositories.RoleRepository;
 import rw.bnr.banking.v1.security.JwtTokenProvider;
+import rw.bnr.banking.v1.security.UserPrincipal;
 import rw.bnr.banking.v1.services.IAuthService;
 import rw.bnr.banking.v1.standalone.MailService;
 import rw.bnr.banking.v1.utils.Utility;
@@ -77,20 +78,32 @@ public class AuthServiceImpl implements IAuthService {
     //    login
     @Override
     public JwtAuthenticationResponse login(LoginDTO dto) {
-        Authentication authentication = authenticationManager
-                .authenticate(new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword()));
-        SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = null;
+
+        // Authenticate the user
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword())
+        );
+
         try {
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+
             jwt = jwtTokenProvider.generateToken(authentication);
+
         } catch (Exception e) {
-            throw new AppException("Error generating token", e);
+            throw new BadRequestException(e.getMessage());
         }
-        Customer user = customerRepo.findByEmail(dto.getEmail()).orElseThrow(() -> new UsernameNotFoundException("no customer found with that email"));
-        return new JwtAuthenticationResponse(jwt, user);
+
+        Customer customer = customerRepo.findByEmail(dto.getEmail()).orElseThrow(() -> new UsernameNotFoundException("user not found "));
+        if (customer.getStatus() == ECustomerStatus.PENDING)
+            throw new BadRequestException("please verify account before login ");
+        if (customer.getStatus() == ECustomerStatus.DEACTIVATED)
+            throw new BadRequestException("your account is deactivated , please activate it before using it ");
+        return new JwtAuthenticationResponse(jwt, customer);
     }
 
-//    initiate reset of password
+    //    initiate reset of password
     @Override
     public void initiateResetPassword(String email) {
         Customer user = customerRepo.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("no customer found with that email"));
@@ -101,7 +114,7 @@ public class AuthServiceImpl implements IAuthService {
     }
 
 
-//    reset password
+    //    reset password
     @Override
     public void resetPassword(String email, String passwordResetCode, String newPassword) {
         Customer user = customerRepo.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("no customer found with  that email "));
@@ -109,6 +122,7 @@ public class AuthServiceImpl implements IAuthService {
                 (user.getStatus().equals(ECustomerStatus.RESET)) || user.getStatus().equals(ECustomerStatus.PENDING)) {
             user.setPassword(passwordEncoder.encode(newPassword));
             user.setActivationCode(Utility.randomUUID(6, 0, 'N'));
+            user.setActivationCodeExpiresAt(null);
             user.setStatus(ECustomerStatus.ACTIVE);
             customerRepo.save(user);
             this.mailService.sendPasswordResetSuccessfully(user.getEmail(), user.getFullName());
