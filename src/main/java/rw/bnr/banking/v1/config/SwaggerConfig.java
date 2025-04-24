@@ -1,42 +1,62 @@
 package rw.bnr.banking.v1.config;
 
-import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
-import io.swagger.v3.oas.models.security.SecurityRequirement;
-import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.servers.Server;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
+
+import java.util.List;
 
 @Configuration
+@SecurityScheme(
+        name = "bearerAuth",
+        description = "JWT-based authentication. Include a valid token in the Authorization header.",
+        type = SecuritySchemeType.HTTP,
+        scheme = "bearer",
+        bearerFormat = "JWT",
+        in = SecuritySchemeIn.HEADER
+)
 public class SwaggerConfig {
 
-    final String schemeName = "bearerAuth";
-    final String bearerFormat = "JWT";
-    final String scheme = "bearer";
+    @Value("${app.server.url}")
+    private String serverUrl;
 
     @Bean
-    public OpenAPI baseOpenAPI() {
+    @Profile("dev")
+    public OpenAPI openAPIForDev() {
         return new OpenAPI()
-                .addSecurityItem(
-                        new SecurityRequirement()
-                                .addList(schemeName)
-                )
-                .components(
-                        new Components()
-                                .addSecuritySchemes(
-                                        schemeName,
-                                        new SecurityScheme()
-                                                .name(schemeName)
-                                                .type(SecurityScheme.Type.HTTP)
-                                                .bearerFormat(bearerFormat)
-                                                .in(SecurityScheme.In.HEADER)
-                                                .scheme(scheme)
-                                ))
-                .info(
-                        new Info()
-                                .title("BNR Banking Application Docs")
-                                .version("1.0.0").description("This is a banking application developed by Jean de Dieu NSHIMYUMUKIZA"));
+                .info(new Info()
+                        .title("🏦 BNR Banking Application API Docs")
+                        .description("This is the Swagger documentation for the BNR Banking Application backend APIs.")
+                        .version("1.0.0"))
+                .servers(List.of(new Server().url(serverUrl).description("Development Server")));
     }
 
+    @Bean
+    @Profile("prod")
+    public OpenAPI openAPIForProd() {
+        return new OpenAPI()
+                .info(new Info()
+                        .title("🏦 BNR Banking Application API Docs")
+                        .description("Production API documentation for the BNR Banking Application.")
+                        .version("1.0.0"))
+                .servers(List.of(new Server().url(serverUrl).description("Production Server")));
+    }
+
+    @Bean
+    @Profile("test")
+    public OpenAPI openAPIForTest() {
+        return new OpenAPI()
+                .info(new Info()
+                        .title("🏦 BNR Banking Application API Docs")
+                        .description("Testing API documentation for the BNR Banking Application.")
+                        .version("1.0.0"))
+                .servers(List.of(new Server().url(serverUrl).description("Testing Server")));
+    }
 }

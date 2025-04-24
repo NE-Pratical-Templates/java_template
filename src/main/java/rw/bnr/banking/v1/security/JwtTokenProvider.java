@@ -3,15 +3,13 @@ package rw.bnr.banking.v1.security;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 import rw.bnr.banking.v1.models.Customer;
-import rw.bnr.banking.v1.repositories.ICustomerRepository;
+import rw.bnr.banking.v1.repositories.CustomerRepository;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -22,7 +20,7 @@ import java.util.Set;
 @Slf4j
 public class JwtTokenProvider {
 
-    private final ICustomerRepository userRepository;
+    private final CustomerRepository customerRepo;
 
     @Value("${jwt.secret}")
     private String jwtSecret;
@@ -40,7 +38,7 @@ public class JwtTokenProvider {
             grantedAuthorities.add(new SimpleGrantedAuthority(role.getAuthority()));
         }
 
-        Customer authUser = userRepository.findById(userPrincipal.getId()).get();
+        Customer authUser = customerRepo.findById(userPrincipal.getId()).get();
 
         return Jwts.builder()
                 .setId(authUser.getId() + "")
