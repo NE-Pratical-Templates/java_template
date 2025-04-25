@@ -24,4 +24,5 @@ public interface ICustomerService {
     Customer changeProfileImage(UUID id, File file);
 
     Customer removeProfileImage(UUID id);
+    public Customer save(Customer user) ;
 }

@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import rw.bnr.banking.v1.audits.InitiatorAudit;
+import rw.bnr.banking.v1.enums.ETransactionType;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -29,14 +30,18 @@ public class BankingTransaction extends InitiatorAudit {
     private Customer customer;
 
     @ManyToOne
-    @JoinColumn(name = "sender_to_id")
-    private Customer sender;
+    @JoinColumn(name = "receiver_to_id")
+    private Customer receiver;
 
     @Column(name = "amount")
     private double amount;
 
     @Column(name = "account")
     private String account;
+
+    @Column(name = "type")
+    @Enumerated(EnumType.STRING)
+    private ETransactionType transactionType;
 
     @CreationTimestamp
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")

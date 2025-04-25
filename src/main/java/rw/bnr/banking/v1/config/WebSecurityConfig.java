@@ -82,5 +82,12 @@ public class WebSecurityConfig {
             "/api/v1/customers/search",
             "/api/v1/customers/account/**",
             "/api/v1/customers/delete/**",
+            "/api/v1/transactions/all",
+            "/api/v1/transactions/transaction/**",
+            "/api/v1/transactions/type/**",
+            "/api/v1/transactions/customer/transactions/**",
+            "/api/v1/messages/all",
+            "/api/v1/messages/customer/messages/**"
+
     };
 }

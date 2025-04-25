@@ -1,6 +1,7 @@
 package rw.bnr.banking.v1.serviceImpls;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,6 +16,7 @@ import rw.bnr.banking.v1.repositories.ICustomerRepository;
 import rw.bnr.banking.v1.services.ICustomerService;
 import rw.bnr.banking.v1.services.IFileService;
 import rw.bnr.banking.v1.standalone.FileStorageService;
+import rw.bnr.banking.v1.utils.Utility;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -107,5 +109,15 @@ public class CustomerServiceImpl implements ICustomerService {
         }
         user.setProfileImage(null);
         return customerRepo.save(user);
+    }
+
+    @Override
+    public Customer save(Customer user) {
+        try {
+            return customerRepo.save(user);
+        } catch (DataIntegrityViolationException ex) {
+            String errorMessage = Utility.getConstraintViolationMessage(ex, user);
+            throw new BadRequestException(errorMessage, ex);
+        }
     }
 }
