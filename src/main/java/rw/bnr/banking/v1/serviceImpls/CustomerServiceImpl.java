@@ -10,16 +10,21 @@ import rw.bnr.banking.v1.dtos.UpdateCustomerDTO;
 import rw.bnr.banking.v1.exceptions.BadRequestException;
 import rw.bnr.banking.v1.exceptions.ResourceNotFoundException;
 import rw.bnr.banking.v1.models.Customer;
-import rw.bnr.banking.v1.repositories.CustomerRepository;
-import rw.bnr.banking.v1.services.CustomerService;
+import rw.bnr.banking.v1.models.File;
+import rw.bnr.banking.v1.repositories.ICustomerRepository;
+import rw.bnr.banking.v1.services.ICustomerService;
+import rw.bnr.banking.v1.services.IFileService;
+import rw.bnr.banking.v1.standalone.FileStorageService;
 
 import java.util.Optional;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class CustomerServiceImpl implements CustomerService {
-    private final CustomerRepository customerRepo;
+public class CustomerServiceImpl implements ICustomerService {
+    private final ICustomerRepository customerRepo;
+    private final FileStorageService fileStorageService;
+    private final IFileService fileService;
 
     @Override
     public Customer getLoggedInCustomer() {
@@ -77,5 +82,30 @@ public class CustomerServiceImpl implements CustomerService {
     public Customer getById(UUID id) {
         return customerRepo.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("Customer", "id", id.toString()));
+    }
+
+    @Override
+    public Customer changeProfileImage(UUID id, File file) {
+        Customer entity = customerRepo.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Document", "id", id.toString()));
+        File existingFile = entity.getProfileImage();
+        if (existingFile != null) {
+            this.fileStorageService.removeFileOnDisk(existingFile.getPath());
+        }
+        entity.setProfileImage(file);
+        return customerRepo.save(entity);
+
+    }
+
+    @Override
+    public Customer removeProfileImage(UUID id) {
+        Customer user = customerRepo.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Customer", "id", id.toString()));
+        File file = user.getProfileImage();
+        if (file != null) {
+            this.fileService.delete(file.getId());
+        }
+        user.setProfileImage(null);
+        return customerRepo.save(user);
     }
 }

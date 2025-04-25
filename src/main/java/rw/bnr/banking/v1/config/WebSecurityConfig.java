@@ -23,8 +23,6 @@ import rw.bnr.banking.v1.security.JwtAuthenticationFilter;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-//TODO: handle swagger problems
-
 public class WebSecurityConfig {
 
     private final JwtAuthenticationEntryPoint authenticationEntryPoint;

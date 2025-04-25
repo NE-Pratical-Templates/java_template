@@ -14,15 +14,13 @@ import rw.bnr.banking.v1.dtos.request.LoginDTO;
 import rw.bnr.banking.v1.dtos.response.JwtAuthenticationResponse;
 import rw.bnr.banking.v1.enums.ECustomerStatus;
 import rw.bnr.banking.v1.enums.ERole;
-import rw.bnr.banking.v1.exceptions.AppException;
 import rw.bnr.banking.v1.exceptions.BadRequestException;
 import rw.bnr.banking.v1.exceptions.ResourceNotFoundException;
 import rw.bnr.banking.v1.models.Customer;
 import rw.bnr.banking.v1.models.Role;
-import rw.bnr.banking.v1.repositories.CustomerRepository;
-import rw.bnr.banking.v1.repositories.RoleRepository;
+import rw.bnr.banking.v1.repositories.ICustomerRepository;
+import rw.bnr.banking.v1.repositories.IRoleRepository;
 import rw.bnr.banking.v1.security.JwtTokenProvider;
-import rw.bnr.banking.v1.security.UserPrincipal;
 import rw.bnr.banking.v1.services.IAuthService;
 import rw.bnr.banking.v1.standalone.MailService;
 import rw.bnr.banking.v1.utils.Utility;
@@ -34,9 +32,9 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements IAuthService {
-    private final CustomerRepository customerRepo;
+    private final ICustomerRepository customerRepo;
     private static final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-    private final RoleRepository roleRepo;
+    private final IRoleRepository roleRepo;
     private final MailService mailService;
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManager authenticationManager;

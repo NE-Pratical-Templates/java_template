@@ -9,7 +9,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 import rw.bnr.banking.v1.models.Customer;
-import rw.bnr.banking.v1.repositories.CustomerRepository;
+import rw.bnr.banking.v1.repositories.ICustomerRepository;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -20,7 +20,7 @@ import java.util.Set;
 @Slf4j
 public class JwtTokenProvider {
 
-    private final CustomerRepository customerRepo;
+    private final ICustomerRepository customerRepo;
 
     @Value("${jwt.secret}")
     private String jwtSecret;

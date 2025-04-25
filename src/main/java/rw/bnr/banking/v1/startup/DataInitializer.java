@@ -11,8 +11,8 @@ import rw.bnr.banking.v1.enums.ERole;
 import rw.bnr.banking.v1.exceptions.BadRequestException;
 import rw.bnr.banking.v1.models.Customer;
 import rw.bnr.banking.v1.models.Role;
-import rw.bnr.banking.v1.repositories.CustomerRepository;
-import rw.bnr.banking.v1.repositories.RoleRepository;
+import rw.bnr.banking.v1.repositories.ICustomerRepository;
+import rw.bnr.banking.v1.repositories.IRoleRepository;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -23,11 +23,11 @@ import java.util.Set;
 @Slf4j
 public class DataInitializer implements ApplicationRunner {
 
-    private final RoleRepository roleRepo;
-    private final CustomerRepository customerRepo;
+    private final IRoleRepository roleRepo;
+    private final ICustomerRepository customerRepo;
     private final PasswordEncoder encoder;
 
-    public DataInitializer(RoleRepository roleRepo, CustomerRepository customerRepo, PasswordEncoder encoder) {
+    public DataInitializer(IRoleRepository roleRepo, ICustomerRepository customerRepo, PasswordEncoder encoder) {
         this.roleRepo = roleRepo;
         this.customerRepo = customerRepo;
         this.encoder = encoder;

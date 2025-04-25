@@ -7,7 +7,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import rw.bnr.banking.v1.models.Customer;
-import rw.bnr.banking.v1.repositories.CustomerRepository;
+import rw.bnr.banking.v1.repositories.ICustomerRepository;
 
 import java.util.UUID;
 
@@ -15,7 +15,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 
-    private final CustomerRepository userRepo;
+    private final ICustomerRepository userRepo;
 
     @Transactional
     public UserDetails loadByUserId(UUID id) {
