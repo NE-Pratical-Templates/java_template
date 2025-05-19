@@ -52,7 +52,7 @@ public class Customer extends InitiatorAudit {
     @Column(name = "account")
     private String account;
 
-    @Column(name = "balance", columnDefinition = "DOUBLE DEFAULT 0")
+    @Column(name = "balance", columnDefinition = "DOUBLE precision DEFAULT 0")
     private double balance;
 
     @Enumerated(EnumType.STRING)
